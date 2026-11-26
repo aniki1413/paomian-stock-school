@@ -108,7 +108,7 @@ test("preview: a stored bearer is still invalidated server-side", async () => {
   assert.equal(h.requests, 1);
 });
 
-// ── Deployed ───────────────────────────────────────────────────────────────────────
+// ── Deployed ─────────────────────────────────────────────────────────────────────
 // JS cannot delete the HttpOnly `__Host-` cookie and `cookieCache` keeps
 // serving the cached session, so an unconfirmed sign-out must NOT look like one.
 
@@ -157,7 +157,7 @@ test("settleWithin waits its full window, then gives up rather than hanging", as
   assert.equal(outcome, "timeout", "the caller is never left waiting on a wedged request");
 });
 
-// ── Pre-sign-in session clear (`signIn`) ─────────────────────────────────────
+// ── Pre-sign-in session clear (`signIn`) ───────────────────────────────────────
 // Same per-environment bound as sign-out, but best effort: it also runs when
 // there is no prior session, so a failure must never block sign-in.
 
