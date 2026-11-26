@@ -392,7 +392,7 @@ function gradeWeekendBody(
   if (flags.onlyIce) {
     return {
       stars: 1,
-      title: "I-Goose 被大太陽曬得直摂翅膀",
+      title: "I-Goose 被大太陽曬得直搧翅膀",
       comment: "大太陽時只顧著冰品，變天以後假錢會一起被晃到。下次兩個攤都看過再決定，現金也可以留一點。",
     };
   }
