@@ -303,7 +303,10 @@ function gradeBreakfastPath(input: SimGradeInput): Grade {
 
 export function gradeStickerStall(input: SimGradeInput): Grade {
   const buysAfterBreak = input.actions.slice(3).includes("buy");
-  const leftInTime = (input.fullExit ?? []).slice(0, 4).some(Boolean);
+  // 第 4 天（index 3）收盤跌破 8.5：那天結束時手上已經沒有股票，才算照約定離開。
+  // 只看 fullExit[3]，避免「還沒買之前本來就 0 份」被誤算成已經離開。
+  const exits = input.fullExit ?? [];
+  const leftInTime = input.sellCount > 0 && exits[3] === true;
   const followed = input.buyCount > 0 && !buysAfterBreak && leftInTime;
   if (followed) {
     return {
@@ -335,7 +338,7 @@ export function gradeStickerStall(input: SimGradeInput): Grade {
       comment: "一路拿到最後都沒有離開，跌破 8.5 之後還在往下。照約定在跌破時全部賣掉，虧得會少一截。小虧比大虧好。",
     };
   }
-  const leftLate = (input.fullExit ?? []).slice(4).some(Boolean);
+  const leftLate = exits.slice(4).some(Boolean);
   return {
     stars: 2,
     title: "有用到離開的方法",

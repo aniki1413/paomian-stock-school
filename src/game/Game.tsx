@@ -191,39 +191,42 @@ function Title({ save, onStart }: { save: SaveV1; onStart: () => void }) {
   const points = sumPoints(save);
   const started = stars > 0;
   return (
-    <section className="grid min-h-dvh md:grid-cols-2">
-      <div className="relative flex h-[46vh] items-end justify-center bg-bg md:h-auto">
+    <section className="grid min-h-dvh grid-rows-[auto_1fr] md:grid-cols-2 md:grid-rows-1">
+      <div className="relative flex items-center justify-center bg-bg pt-6 md:h-auto md:pt-0">
         <img
           src="/family.jpg"
           alt="泡麵、邪仔、里長伯、里幹事、OHRU、I-DEE、I-Goose"
-          className="h-full w-full object-contain"
+          className="h-auto max-h-[46vh] w-full object-contain md:h-full md:max-h-none"
         />
       </div>
-      <div className="relative flex flex-col justify-center overflow-hidden px-6 py-8 md:px-12">
-        <span className="dash left-8 top-10 w-16" />
-        <span className="dash right-10 top-24 w-10 rotate-12" />
-        <span className="dash bottom-16 left-16 w-8 -rotate-6" />
-        <p className="text-sm font-black tracking-[0.28em] text-maroon">泡麵家族</p>
-        <h1 className="title-hero mt-2">
-          股市
-          <br />
-          小學堂
-        </h1>
-        <p className="mt-4 max-w-sm text-lg font-bold leading-snug">
-          給初學者與小朋友的闖關課：先認識 K 棒和成交量，再用假錢練習模擬、均線、停損停利和分散投資。
-        </p>
-        <div className="mt-6 flex flex-wrap items-center gap-3">
-          <button className="btn-main" onClick={onStart}>
-            {started ? "繼續闖關" : "開始闖關"}
-          </button>
-          <p className="text-sm font-bold text-muted">
-            星星 {stars}/{MAX_STARS}
-            {points > 0 ? ` · 學分 ${points}` : ""}
+      <div className="relative flex flex-col justify-center overflow-hidden px-6 py-10 md:px-12">
+        {/* 裝飾白線只放在四周留白處，並壓在文字下層，避免擋住封面文字 */}
+        <span aria-hidden className="dash pointer-events-none left-8 top-3 z-0 w-16" />
+        <span aria-hidden className="dash pointer-events-none right-6 top-5 z-0 w-10 rotate-12" />
+        <span aria-hidden className="dash pointer-events-none bottom-3 right-10 z-0 w-8 -rotate-6" />
+        <div className="relative z-10">
+          <p className="text-sm font-black tracking-[0.28em] text-maroon">泡麵家族</p>
+          <h1 className="title-hero mt-2">
+            股市
+            <br />
+            小學堂
+          </h1>
+          <p className="mt-4 max-w-sm text-lg font-bold leading-snug">
+            給初學者與小朋友的闖關課：先認識 K 棒和成交量，再用假錢練習模擬、均線、停損停利和分散投資。
+          </p>
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <button className="btn-main" onClick={onStart}>
+              {started ? "繼續闖關" : "開始闖關"}
+            </button>
+            <p className="text-sm font-bold text-muted">
+              星星 {stars}/{MAX_STARS}
+              {points > 0 ? ` · 學分 ${points}` : ""}
+            </p>
+          </div>
+          <p className="mt-6 max-w-sm text-sm leading-relaxed text-muted">
+            台灣股市習慣紅漲、綠跌。這裡的錢都是假的，學會看圖，不是叫你現在去買股票。
           </p>
         </div>
-        <p className="mt-6 max-w-sm text-sm leading-relaxed text-muted">
-          台灣股市習慣紅漲、綠跌。這裡的錢都是假的，學會看圖，不是叫你現在去買股票。
-        </p>
       </div>
     </section>
   );
