@@ -13,4 +13,6 @@ npm install
 npm run dev
 ```
 
+`npm install` 會從 `assets-b64` 還原圖片。
+
 瀏覽器打開終端機顯示的網址即可。進度存在這台裝置的瀏覽器裡。
