@@ -303,7 +303,10 @@ function gradeBreakfastPath(input: SimGradeInput): Grade {
 
 export function gradeStickerStall(input: SimGradeInput): Grade {
   const buysAfterBreak = input.actions.slice(3).includes("buy");
-  const leftInTime = (input.fullExit ?? []).slice(0, 4).some(Boolean);
+  // 第 4 天（index 3）收盤跌破 8.5：那天結束時手上已經沒有股票，才算照約定離開。
+  // 只看 fullExit[3]，避免「還沒買之前本來就 0 份」被誤算成已經離開。
+  const exits = input.fullExit ?? [];
+  const leftInTime = input.sellCount > 0 && exits[3] === true;
   const followed = input.buyCount > 0 && !buysAfterBreak && leftInTime;
   if (followed) {
     return {
@@ -389,7 +392,7 @@ function gradeWeekendBody(
   if (flags.onlyIce) {
     return {
       stars: 1,
-      title: "I-Goose 被大太陽曬得直搧翅膀",
+      title: "I-Goose 被大太陽曬得直摂翅膀",
       comment: "大太陽時只顧著冰品，變天以後假錢會一起被晃到。下次兩個攤都看過再決定，現金也可以留一點。",
     };
   }
