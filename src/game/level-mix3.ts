@@ -52,7 +52,7 @@ export const LEVEL_MIX3: Level = {
         },
         {
           id: "c",
-          label: "一次全換掉，變化來了較少退路"
+          label: "一次全換掉，才不會錯過任何上漲"
         }
       ],
       explain: "全押會讓你只剩一種結局。留下退路，不是膽小，是讓自己還能做下一個決定。"
@@ -64,7 +64,7 @@ export const LEVEL_MIX3: Level = {
       choices: [
         {
           id: "a",
-          label: "不會。它只能讓一次打擊變小，不是保證",
+          label: "不是，它只能讓一次打擊變小",
           correct: true
         },
         {
