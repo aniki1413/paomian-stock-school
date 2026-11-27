@@ -45,7 +45,7 @@ export function LevelScreen({
           <ArrowLeft className="size-5" />
         </button>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-black text-maroon">{CHAPTERS.find((item) => item.id === level.chapter)?.title}</p>
+          <p className="text-sm font-black text-maroon">{CHAPTERS.find((item) => item.id === level.chapter)?.title}</p>
           <h2 className="truncate text-xl font-black">{level.title}</h2>
         </div>
         <button className="btn-ghost" onClick={() => setShowHint((value) => !value)}>
@@ -106,7 +106,7 @@ function Speech({ name, img, text }: { name: string; img: string; text: string }
     <div className="flex items-end gap-2 overflow-visible">
       <img src={img} alt="" className="h-24 w-[4.5rem] shrink-0 object-contain object-bottom" />
       <div className="sticker rounded-bl-md px-3 py-2">
-        <p className="text-xs font-black text-maroon">{name}</p>
+        <p className="text-sm font-black text-maroon">{name}</p>
         <p className="text-base font-bold leading-snug">{text}</p>
       </div>
     </div>
