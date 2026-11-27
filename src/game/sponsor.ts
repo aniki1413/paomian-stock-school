@@ -120,6 +120,14 @@ export function videoEmbed(url: string): { kind: "file" | "youtube"; src: string
   return { kind: "file", src: url };
 }
 
+export function linkHost(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+}
+
 export function safeHttpUrl(url: string): string | null {
   try {
     const parsed = new URL(url);
