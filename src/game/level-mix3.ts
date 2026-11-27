@@ -43,16 +43,16 @@ export const LEVEL_MIX3: Level = {
       choices: [
         {
           id: "a",
-          label: "還有現金，碰到變化時比較有退路",
+          label: "留著現金，變化來時比較有退路",
           correct: true
         },
         {
           id: "b",
-          label: "全部換掉才能保證賺錢"
+          label: "全部換掉，才能保證會賺錢"
         },
         {
           id: "c",
-          label: "一次全換掉，才不會錯過任何上漲"
+          label: "一次全換，才不會錯過上漲"
         }
       ],
       explain: "全押會讓你只剩一種結局。留下退路，不是膽小，是讓自己還能做下一個決定。"
