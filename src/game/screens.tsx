@@ -124,7 +124,7 @@ export function MapScreen({
               }`}
             >
               <img src={item.img} alt="" className="size-14 object-contain" />
-              <span className="mt-1 text-xs font-black">{item.name}</span>
+              <span className="mt-1 text-sm font-black">{item.name}</span>
             </button>
           );
         })}
