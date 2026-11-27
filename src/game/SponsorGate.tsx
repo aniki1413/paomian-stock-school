@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { SponsorAd } from "../config/sponsors";
-import { safeHttpUrl, videoEmbed } from "./sponsor";
+import { linkHost, safeHttpUrl, videoEmbed } from "./sponsor";
 
 export function SponsorGate({
   ad,
@@ -12,8 +12,24 @@ export function SponsorGate({
   onDone: () => void;
 }) {
   const [phase, setPhase] = useState<"offer" | "play">("offer");
+
+  useEffect(() => {
+    if (phase !== "offer") return;
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") onSkip();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [phase, onSkip]);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/45 p-3 sm:items-center" role="presentation">
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-ink/45 p-3 sm:items-center"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (phase === "offer" && event.target === event.currentTarget) onSkip();
+      }}
+    >
       {phase === "offer" ? (
         <Offer ad={ad} onOpen={() => setPhase("play")} onSkip={onSkip} />
       ) : (
@@ -34,18 +50,18 @@ function Offer({ ad, onOpen, onSkip }: { ad: SponsorAd; onOpen: () => void; onSk
       <div className="flex items-end gap-2">
         <img src="/characters/dad.png" alt="" className="h-28 w-24 shrink-0 object-contain object-bottom" />
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-black text-maroon">泡麵</p>
+          <p className="text-base font-black text-maroon">泡麵</p>
           <p id="sponsor-offer-title" className="text-base font-bold leading-snug">
             把拔有一則小通知，想看的話再按。不看也沒關係，闖關進度不會少。
           </p>
         </div>
       </div>
-      <p className="mt-3 text-xs font-bold text-muted">這一則是{ad.sponsor}</p>
+      <p className="mt-3 text-base font-bold leading-snug text-muted">這一則是{ad.sponsor}</p>
       <div className="mt-4 flex flex-col gap-2">
-        <button className="btn-main w-full text-base leading-snug" onClick={onOpen} autoFocus>
+        <button className="btn-main w-full whitespace-normal text-center text-base leading-snug" onClick={onOpen} autoFocus>
           泡麵把拔自肥廣告時間
         </button>
-        <button className="btn-ghost w-full" onClick={onSkip}>
+        <button className="btn-ghost w-full whitespace-normal text-center text-base leading-snug" onClick={onSkip}>
           下次再說
         </button>
       </div>
@@ -58,6 +74,7 @@ function Player({ ad, onDone }: { ad: SponsorAd; onDone: () => void }) {
   const [askLink, setAskLink] = useState(false);
   const ready = left <= 0;
   const link = ad.link ? safeHttpUrl(ad.link) : null;
+  const host = link ? linkHost(link) : "";
   const video = ad.videoUrl ? videoEmbed(ad.videoUrl) : null;
 
   useEffect(() => {
@@ -68,75 +85,94 @@ function Player({ ad, onDone }: { ad: SponsorAd; onDone: () => void }) {
 
   return (
     <div
-      className="sticker max-h-[92dvh] w-full max-w-md overflow-y-auto p-4"
+      className="sticker flex max-h-[92dvh] w-full max-w-md flex-col overflow-hidden p-0"
       role="dialog"
       aria-modal="true"
       aria-labelledby="sponsor-play-title"
     >
-      <div className="flex items-center justify-between gap-2">
-        <span className="rounded-full border-2 border-ink bg-rose px-2 py-0.5 text-xs font-black">贊助內容</span>
-        <span className="text-sm font-black text-maroon" aria-live="polite">
-          {ready ? "可以繼續了" : `還有 ${left} 秒`}
-        </span>
-      </div>
-      <div className="mt-3 flex items-end gap-2">
-        <img src="/characters/dad.png" alt="" className="h-24 w-20 shrink-0 object-contain object-bottom" />
-        <div className="min-w-0">
-          <p className="text-xs font-black text-maroon">泡麵 · {ad.sponsor}</p>
-          <h2 id="sponsor-play-title" className="text-xl font-black leading-snug">
-            {ad.title}
-          </h2>
+      <div className="relative shrink-0 px-4 pt-4 pr-14">
+        <button
+          type="button"
+          className="absolute top-3 right-3 flex size-11 items-center justify-center rounded-full border-2 border-ink bg-cream text-xl font-black leading-none"
+          onClick={onDone}
+          aria-label="先跳過"
+        >
+          ✕
+        </button>
+        <div className="flex items-center justify-between gap-2">
+          <span className="rounded-full border-2 border-ink bg-rose px-2 py-0.5 text-sm font-black">贊助內容</span>
+          <span className="text-base font-black text-maroon" aria-live="polite">
+            {ready ? "可以繼續了" : `還有 ${left} 秒`}
+          </span>
         </div>
       </div>
-      {ad.image ? (
-        <img src={ad.image} alt="" className="mt-3 max-h-40 w-full rounded-xl border-2 border-ink object-contain" />
-      ) : null}
-      <p className="mt-3 text-base font-bold leading-relaxed">{ad.body}</p>
-      {video?.kind === "file" ? (
-        <video className="mt-3 w-full rounded-xl border-2 border-ink" controls playsInline preload="metadata" src={video.src} />
-      ) : null}
-      {video?.kind === "youtube" ? (
-        <iframe
-          className="mt-3 aspect-video w-full rounded-xl border-2 border-ink"
-          src={video.src}
-          title={ad.title}
-          allow="encrypted-media; picture-in-picture"
-          referrerPolicy="strict-origin-when-cross-origin"
-        />
-      ) : null}
-      {ready && link && askLink ? (
-        <div className="mt-3 rounded-xl border-2 border-ink bg-bg p-3">
-          <p className="text-sm font-bold leading-snug">要開新分頁看介紹嗎？遊戲會留在這一頁，不會自己跳走。</p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            <button
-              className="btn-ghost"
-              onClick={() => {
-                window.open(link, "_blank", "noopener,noreferrer");
-                setAskLink(false);
-              }}
-            >
-              開新分頁
-            </button>
-            <button className="btn-ghost" onClick={() => setAskLink(false)}>
-              先不要
-            </button>
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-3">
+        <div className="mt-3 flex items-end gap-2">
+          <img src="/characters/dad.png" alt="" className="h-24 w-20 shrink-0 object-contain object-bottom" />
+          <div className="min-w-0">
+            <p className="text-base font-black leading-snug text-maroon">泡麵 · {ad.sponsor}</p>
+            <h2 id="sponsor-play-title" className="break-words text-xl font-black leading-snug">
+              {ad.title}
+            </h2>
           </div>
         </div>
-      ) : null}
-      {ready ? (
-        <div className="mt-4 flex flex-col gap-2">
-          {link && !askLink ? (
-            <button className="btn-ghost w-full" onClick={() => setAskLink(true)}>
-              了解更多
+        {ad.image ? (
+          <img src={ad.image} alt="" className="mt-3 max-h-40 w-full rounded-xl border-2 border-ink object-contain" />
+        ) : null}
+        <p className="mt-3 break-words text-base font-bold leading-relaxed">{ad.body}</p>
+        {video?.kind === "file" ? (
+          <video className="mt-3 w-full rounded-xl border-2 border-ink" controls playsInline preload="metadata" src={video.src} />
+        ) : null}
+        {video?.kind === "youtube" ? (
+          <iframe
+            className="mt-3 aspect-video w-full rounded-xl border-2 border-ink"
+            src={video.src}
+            title={ad.title}
+            allow="encrypted-media; picture-in-picture"
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
+        ) : null}
+        {ready && link && askLink ? (
+          <div className="mt-3 rounded-xl border-2 border-ink bg-bg p-3">
+            <p className="break-words text-base font-bold leading-snug">
+              要開新分頁前往 {host} 嗎？遊戲會留在這一頁，不會自己跳走。
+            </p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <button
+                className="btn-ghost whitespace-normal"
+                onClick={() => {
+                  window.open(link, "_blank", "noopener,noreferrer");
+                  setAskLink(false);
+                }}
+              >
+                開新分頁
+              </button>
+              <button className="btn-ghost" onClick={() => setAskLink(false)}>
+                先不要
+              </button>
+            </div>
+          </div>
+        ) : null}
+      </div>
+      <div className="shrink-0 border-t-[3px] border-ink bg-cream px-4 py-3">
+        <div className="flex flex-col gap-2">
+          {ready && link && !askLink ? (
+            <button
+              className="btn-ghost h-auto w-full whitespace-normal break-words px-4 py-3 text-center text-base leading-snug"
+              onClick={() => setAskLink(true)}
+            >
+              {ad.linkLabel?.trim() || "了解更多"}
             </button>
           ) : null}
-          <button className="btn-main w-full" onClick={onDone} autoFocus>
-            繼續遊戲
-          </button>
+          {ready ? (
+            <button className="btn-main w-full whitespace-normal text-center text-base leading-snug" onClick={onDone} autoFocus>
+              繼續遊戲
+            </button>
+          ) : (
+            <p className="text-center text-base font-bold leading-snug text-muted">倒數還沒完，也可以按右上角 ✕ 先跳過。</p>
+          )}
         </div>
-      ) : (
-        <p className="mt-4 text-sm font-bold text-muted">看完倒數就可以繼續闖關。</p>
-      )}
+      </div>
     </div>
   );
 }
