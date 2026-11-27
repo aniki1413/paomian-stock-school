@@ -158,7 +158,7 @@ function Title({ save, onStart }: { save: SaveV1; onStart: () => void }) {
           className="h-auto w-full object-contain md:h-full md:max-h-dvh"
         />
       </div>
-      <div className="relative flex flex-col justify-start overflow-hidden px-6 py-8 md:justify-center md:px-12">
+      <div className="relative flex flex-col justify-center overflow-hidden px-6 py-8 md:px-12">
         <span aria-hidden className="dash pointer-events-none z-0 top-3 left-3 w-16" />
         <span aria-hidden className="dash pointer-events-none z-0 top-5 right-3 w-10 rotate-12" />
         <span aria-hidden className="dash pointer-events-none z-0 bottom-3 left-3 w-8 -rotate-6" />
@@ -169,7 +169,7 @@ function Title({ save, onStart }: { save: SaveV1; onStart: () => void }) {
             <br />
             小學堂
           </h1>
-          <p className="mt-4 max-w-sm text-lg font-bold leading-snug">
+          <p className="mt-7 max-w-sm text-lg font-bold leading-snug">
             給初學者與小朋友的闖關課：先認識 K 棒和成交量，再用假錢練習模擬、均線、停損停利和分散投資。
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
