@@ -258,6 +258,13 @@ export function gradeMaBreakfast(input: SimGradeInput): Grade {
   const grade = gradeBreakfastPath(input);
   if (input.minCash === undefined || input.minCash >= input.start * 0.3) return grade;
   const tip = "不要一次把錢全部買完。";
+  if (grade.title === "跟著路線走") {
+    return {
+      stars: 2,
+      title: "有上車，但錢放太滿",
+      comment: grade.comment.startsWith(tip) ? grade.comment : `${tip}${grade.comment}`,
+    };
+  }
   return {
     stars: grade.stars === 3 ? 2 : grade.stars,
     title: grade.title,
