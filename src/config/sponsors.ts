@@ -35,6 +35,8 @@ export type SponsorAd = {
   image?: string;
   /** 影片網址，mp4 / webm，或 YouTube 連結。可省略。不會自動跳走。 */
   videoUrl?: string;
+  /** 「了解更多」按鈕文字。可省略，省略時顯示「了解更多」。 */
+  linkLabel?: string;
   /** 「了解更多」。可省略。開啟前會先確認，並用新分頁。 */
   link?: string;
   /** 倒數秒數。倒數結束才出現「繼續遊戲」。 */
@@ -63,7 +65,8 @@ export const sponsorConfig: SponsorConfig = {
       body: "這是一則示範廣告，不是真的廠商。泡麵把拔拿它來練習怎麼介紹贊助內容。這裡的錢是假的。廣告也不可以叫人去買股票、借錢，或賭博。",
       image: "/family.jpg",
       seconds: 5,
-      link: "https://example.com",
+      link: "https://www.facebook.com",
+      linkLabel: "泡mi中古車傳送入口",
     },
   ],
 };
