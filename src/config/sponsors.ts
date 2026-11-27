@@ -27,10 +27,12 @@ export type SponsorCadence =
 
 export type SponsorAd = {
   id: string;
-  /** 贊助商名稱。測試用請寫「示範贊助商」。 */
+  /** 贊助商名稱。沒有指定名稱時請寫「贊助商」。 */
   sponsor: string;
   title: string;
   body: string;
+  /** 內文下面的警示。可省略。 */
+  notice?: string;
   /** 站內圖片，例如 "/family.jpg"。可省略。 */
   image?: string;
   /** 影片網址，mp4 / webm，或 YouTube 連結。可省略。不會自動跳走。 */
@@ -60,12 +62,13 @@ export const sponsorConfig: SponsorConfig = {
   ads: [
     {
       id: "demo-stall",
-      sponsor: "示範贊助商",
-      title: "里長伯的假想點心攤",
-      body: "這是一則示範廣告，不是真的廠商。泡麵把拔拿它來練習怎麼介紹贊助內容。這裡的錢是假的。廣告也不可以叫人去買股票、借錢，或賭博。",
+      sponsor: "贊助商",
+      title: "泡麵把拔自肥廣告",
+      body: "傳送口會連接到泡麵的粉絲專頁，可以點贊追蹤，不定時會更新車源以及我們家的影片，跟車輛相關的服務都有喔。",
+      notice: "這裡的錢是假的。廣告也不可以叫人去買股票、借錢，或賭博。",
       image: "/family.jpg",
       seconds: 5,
-      link: "https://www.facebook.com",
+      link: "https://www.facebook.com/aniki1313",
       linkLabel: "泡mi中古車傳送入口",
     },
   ],
