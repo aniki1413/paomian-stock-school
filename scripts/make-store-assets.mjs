@@ -27,12 +27,16 @@ mkdirSync(outDir, { recursive: true });
 const iconPath = join(outDir, "source-icon.png");
 if (source !== iconPath) copyFileSync(source, iconPath);
 
-const icon = sharp(iconPath).resize(1024, 1024, { fit: "cover" }).png();
-await icon.toFile(join(outDir, "icon-only.png"));
-await sharp(iconPath)
-  .resize(1024, 1024, { fit: "cover" })
-  .png()
-  .toFile(join(outDir, "icon-foreground.png"));
+/** iOS rejects an app icon that has an alpha channel, even if every pixel is opaque. */
+function opaqueIcon(size) {
+  return sharp(iconPath).resize(size, size, { fit: "cover" }).removeAlpha().png();
+}
+
+await opaqueIcon(1024).toFile(join(outDir, "icon-only.png"));
+await opaqueIcon(1024).toFile(join(outDir, "icon-foreground.png"));
+await opaqueIcon(1024).toFile(join(root, "public/icon-1024.png"));
+await opaqueIcon(512).toFile(join(root, "public/icon-512.png"));
+await opaqueIcon(180).toFile(join(root, "public/__grok/icon-180.png"));
 await sharp({ create: { width: 1024, height: 1024, channels: 4, background: page } })
   .png()
   .toFile(join(outDir, "icon-background.png"));
