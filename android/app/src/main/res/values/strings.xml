@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">泡麵家親子股海</string>
+    <string name="title_activity_main">泡麵家親子股海</string>
+    <string name="package_name">com.aniki1413.paomianstock</string>
+    <string name="custom_url_scheme">com.aniki1413.paomianstock</string>
+</resources>

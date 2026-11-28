@@ -1,0 +1,66 @@
+# 泡麵家親子股海 — Codemagic
+# 免費方案請用 mac_mini_m2。簽章用 Codemagic 介面上的整合，名稱必須是 codemagic_asc。
+# 這個檔案沒有任何 API 金鑰或 .p8。
+
+workflows:
+  ios-testflight:
+    name: iOS TestFlight（泡麵家親子股海）
+    instance_type: mac_mini_m2
+    max_build_duration: 90
+    integrations:
+      app_store_connect: codemagic_asc
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.aniki1413.paomianstock
+      vars:
+        BUNDLE_ID: com.aniki1413.paomianstock
+        XCODE_PROJECT: ios/App/App.xcodeproj
+        XCODE_SCHEME: App
+      node: 22
+      xcode: latest
+    scripts:
+      - name: Install npm dependencies
+        script: npm ci
+      - name: Build the static web app
+        script: npm run build:native
+      - name: Sync Capacitor iOS
+        script: npx cap sync ios
+      - name: Set up App Store code signing
+        script: xcode-project use-profiles
+      - name: Increment build number from the latest TestFlight build
+        script: bash scripts/codemagic-ios-build-number.sh
+      - name: Build the IPA
+        script: |
+          xcode-project build-ipa \
+            --project "$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+
+  # 除錯用 Android 套件。debug 簽章，不能上傳 Google Play。
+  android-debug-aab:
+    name: Android 除錯 AAB（debug 簽章，不能上架）
+    instance_type: mac_mini_m2
+    max_build_duration: 90
+    environment:
+      node: 22
+      java: 21
+    scripts:
+      - name: Install npm dependencies
+        script: npm ci
+      - name: Build the static web app
+        script: npm run build:native
+      - name: Sync Capacitor Android
+        script: npx cap sync android
+      - name: Build a debug Android App Bundle
+        script: |
+          cd android
+          ./gradlew bundleDebug --no-daemon
+    artifacts:
+      - android/app/build/outputs/bundle/debug/*.aab
