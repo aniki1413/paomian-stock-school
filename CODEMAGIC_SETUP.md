@@ -23,7 +23,7 @@ Bundle ID：`com.aniki1413.paomianstock`
 1. App Store Connect →「使用者與存取權限」→「整合」→「App Store Connect API」。
 2. 發行者 ID 應為 `b74240b4-aec9-428b-997c-840d442b4447`。
 3. 金鑰 ID 應為 `RW4D5W9BZG`。
-4. 權限要是「App 管理」或「管理」。若這把金鑰權限不夠，請另外做一把，並下載只能下載一次的 `.p8` 檔。
+4. 權限請用「管理」（Admin）。這次建置會自動建立發佈憑證，只有「管理」一定做得到。「App 管理」有時會被 Apple 拒絕。若建置說沒有權限，請用同一組整合名稱 `codemagic_asc` 換成「管理」金鑰。
 5. `.p8` 請另外備份在自己的電腦，不要貼到聊天室或 GitHub。
 
 ## 3. 在 Codemagic 加入整合（名稱一定要叫 codemagic_asc）
@@ -39,7 +39,33 @@ Bundle ID：`com.aniki1413.paomianstock`
 9. 上傳 `.p8` 檔（或把檔案內容貼進私鑰欄位，看畫面要求哪一種）。
 10. 儲存。
 
-## 4. 把這個 GitHub 專案加進 Codemagic
+## 4. 貼上簽章私鑰（只要做一次）
+
+上次失敗是因為 Codemagic 在找「已經上傳好的描述檔」，但帳號裡還沒有。現在改成建置時自動向 Apple 建立憑證和描述檔。還需要一把憑證私鑰，放在 Codemagic，不要放進 GitHub。
+
+這把私鑰不是 `.p8`。它是另一段文字，開頭一定是 `-----BEGIN RSA PRIVATE KEY-----`，結尾一定是 `-----END RSA PRIVATE KEY-----`。中間不要改、不要加空行、不要加引號。
+
+請把別人用下面指令產生、傳給你的整段文字貼上（自己有終端機也可以自己產生）：
+
+```bash
+ssh-keygen -t rsa -b 2048 -m PEM -f ios_distribution_private_key -q -N ""
+```
+
+打開產生的 `ios_distribution_private_key`（沒有 `.pub` 的那一個），全選複製。第一行必須是 `-----BEGIN RSA PRIVATE KEY-----`。若是 `BEGIN PRIVATE KEY` 或 `BEGIN OPENSSH PRIVATE KEY`，這把不能用。產生過就不要再產生第二次，否則 Apple 會多一張用不到的憑證（個人帳號最多大約 3 張）。
+
+貼上的地方：
+
+1. 打開這支 App 的 Codemagic 頁面（不是 Team 的 Integrations）。
+2. 點「Environment variables」。
+3. Variable name 填：`CERTIFICATE_PRIVATE_KEY`
+4. Variable value 貼上整段私鑰，含頭尾那兩行。
+5. 勾選 Secret（加密，之後不能再看內容）。
+6. Group 填：`code-signing`（要跟程式裡的名字一模一樣），並建立這個群組。
+7. 點 Add。
+
+不要把這段文字貼到 GitHub、聊天或電子郵件。
+
+## 5. 把這個 GitHub 專案加進 Codemagic
 
 1. Codemagic 首頁點「Add application」。
 2. 選 GitHub，授權後選這個專案（paomian-stock-school）。
@@ -50,13 +76,15 @@ Bundle ID：`com.aniki1413.paomianstock`
    - **iOS TestFlight（泡麵家親子股海）** ← 要按這個
    - Android 除錯 AAB（debug 簽章，不能上架）← 這是練習用，不能拿去 Google Play
 
-## 5. 開始建置並送到 TestFlight
+## 6. 開始建置並送到 TestFlight
 
-1. 選「iOS TestFlight（泡麵家親子股海）」。
-2. 點「Start new build」。
-3. 等它跑完（第一次可能比較久，要下載套件並編譯）。免費方案每個月有 500 分鐘，用在 M2 Mac mini。
-4. 成功後，App Store Connect → 這支 App → TestFlight，會看到新的組建。組建號碼會比上一次 TestFlight 大 1。第一次沒有舊組建時，號碼是 1。
-5. 用 iPhone 安裝 TestFlight App，登入同一個 Apple ID，就能安裝來玩。
+1. 確認分支是 `main`，再點一次「Check for configuration file」，才會用到這次修好的設定。
+2. 選「iOS TestFlight（泡麵家親子股海）」。
+3. 不要到「Code signing identities」上傳憑證或描述檔。那些會自動建立。
+4. 點「Start new build」。
+5. 等它跑完（第一次可能比較久，要下載套件並編譯）。免費方案每個月有 500 分鐘，用在 M2 Mac mini。
+6. 成功後，App Store Connect → 這支 App → TestFlight，會看到新的組建。組建號碼會比上一次 TestFlight 大 1。第一次沒有舊組建時，號碼是 1。
+7. 用 iPhone 安裝 TestFlight App，登入同一個 Apple ID，就能安裝來玩。
 
 ## 還沒做、要你自己在網站上填的
 
