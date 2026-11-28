@@ -2,6 +2,7 @@ import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-r
 import { AuthProvider } from "@/lib/auth/provider";
 import { xGameBannerMeta } from "@/lib/og/share-host";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
+import { NativeExternalLinks } from "@/lib/native-external-links";
 import appCss from "../styles.css?url";
 
 const APP_NAME = "泡麵家族股市小學堂";
@@ -39,6 +40,7 @@ export const Route = createRootRoute({
         <HeadContent />
       </head>
       <body>
+        <NativeExternalLinks />
         <PreviewHostBridge />
         <AuthProvider>
           <Outlet />
