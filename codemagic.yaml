@@ -10,9 +10,9 @@ workflows:
     integrations:
       app_store_connect: codemagic_asc
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.aniki1413.paomianstock
+      # Apple 發佈憑證的私鑰。只放在 Codemagic 的加密變數群組，不要寫進這個檔案。
+      groups:
+        - code-signing
       vars:
         BUNDLE_ID: com.aniki1413.paomianstock
         XCODE_PROJECT: ios/App/App.xcodeproj
@@ -26,7 +26,20 @@ workflows:
         script: npm run build:native
       - name: Sync Capacitor iOS
         script: npx cap sync ios
-      - name: Set up App Store code signing
+      - name: Set up keychain
+        script: keychain initialize
+      - name: Fetch or create the App Store certificate and profile
+        script: |
+          if [ -z "${CERTIFICATE_PRIVATE_KEY:-}" ]; then
+            echo "缺少加密變數 CERTIFICATE_PRIVATE_KEY（群組 code-signing）。請看 CODEMAGIC_SETUP.md。"
+            exit 1
+          fi
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --create
+      - name: Add the certificate to the keychain
+        script: keychain add-certificates
+      - name: Apply the provisioning profile
         script: xcode-project use-profiles
       - name: Increment build number from the latest TestFlight build
         script: bash scripts/codemagic-ios-build-number.sh
